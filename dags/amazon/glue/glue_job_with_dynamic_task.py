@@ -1,3 +1,5 @@
+import pendulum
+
 from airflow.decorators import dag, task
 from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
 
@@ -7,10 +9,10 @@ from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
         'owner': 'user',
         'retries': 0
     },
+    start_date=pendulum.datetime(2024, 11, 25),
     schedule_interval='0 0 * * *'
 )
-def create_dag():
-
+def glue_job_with_dynamic_task():
     @task
     def generate_glue_job_args(target_date: str, tables: list):
         glue_job_args = []
@@ -31,7 +33,7 @@ def create_dag():
         .partial(
             task_id='glue_job_runs',
             job_name='glue_job_name')
-        .expand(glue_job_args)
+        .expand_kwargs(glue_job_args)
     )
 
-create_dag()
+glue_job_with_dynamic_task()
