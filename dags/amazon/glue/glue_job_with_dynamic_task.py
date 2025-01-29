@@ -13,6 +13,7 @@ from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
     schedule_interval='0 0 * * *'
 )
 def glue_job_with_dynamic_task():
+
     @task
     def generate_glue_job_args(target_date: str, tables: list):
         glue_job_args = []
